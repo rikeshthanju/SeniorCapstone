@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory - Start 1 Spark</title>
+
+    <!-- Connects the CSS file -->
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+    <!-- Website header -->
+    <header>
+        <h1>In-Kind Inventory Database</h1>
+    </header>
+
+    <!-- Navigation between pages -->
+    <nav>
+        <a href="/">Home</a>
+        <a href="/inventory">Inventory</a>
+    </nav>
+
+    <!-- Main inventory page -->
+    <main>
+        <h2>Current Inventory</h2>
+
+        <!-- Opens the Add Inventory Item form -->
+        <p>
+            <a class="button" href="/inventory/add">
+                + Add Inventory Item
+            </a>
+        </p>
+
+        <!-- Allows the wide table to scroll horizontally -->
+        <div class="table-container">
+
+            <!-- Inventory table based on sponsor's spreadsheet -->
+            <table class="inventory-table">
+
+                <!-- Table headings -->
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th># of items</th>
+                        <th>Size</th>
+                        <th>Gender</th>
+                        <th>Color</th>
+                        <th>Brand</th>
+                        <th>Date Received</th>
+                        <th>Donor</th>
+                        <th>Acknowledged</th>
+                        <th>Status</th>
+                        <th>Value</th>
+                        <th>School</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+
+                <!-- Inventory records from PostgreSQL -->
+                <tbody>
+
+                    <!-- Displays a message when no items exist -->
+                    <tr th:if="${#lists.isEmpty(items)}">
+                        <td colspan="13">
+                            No inventory items found.
+                        </td>
+                    </tr>
+
+                    <!-- Creates a row for each inventory item -->
+                    <tr th:each="item : ${items}">
+
+                        <!-- Item name -->
+                        <td th:text="${item['name']}"></td>
+
+                        <!-- Quantity -->
+                        <td th:text="${item['quantity']}"></td>
+
+                        <!-- Size -->
+                        <td th:text="${item['size']}"></td>
+
+                        <!-- Gender -->
+                        <td th:text="${item['gender']}"></td>
+
+                        <!-- Color -->
+                        <td th:text="${item['color']}"></td>
+
+                        <!-- Brand -->
+                        <td th:text="${item['brand']}"></td>
+
+                        <!-- Date received -->
+                        <td th:text="${item['date_received']}"></td>
+
+                        <!-- Donor -->
+                        <td th:text="${item['donor']}"></td>
+
+                        <!-- Acknowledgment status -->
+                        <td>
+                            <span class="acknowledged-label"
+                                  th:text="${item['acknowledged']}">
+                            </span>
+                        </td>
+
+                        <!-- Inventory status with colored labels -->
+                        <td>
+                            <span class="status-label"
+                                  th:classappend="${item['status'] == 'In Stock' ? 'status-stock' : (item['status'] == 'Given to Partner' ? 'status-given' : 'status-other')}"
+                                  th:text="${item['status']}">
+                            </span>
+                        </td>
+
+                        <!-- Estimated value formatted as dollars -->
+                        <td th:text="${item['value'] == null ? '' : '$' + #numbers.formatDecimal(item['value'], 1, 2)}">
+                        </td>
+
+                        <!-- Assigned school -->
+                        <td>
+                            <span class="school-label"
+                                  th:text="${item['school']}">
+                            </span>
+                        </td>
+
+                        <!-- Additional notes -->
+                        <td th:text="${item['notes']}"></td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+</body>
+</html>
